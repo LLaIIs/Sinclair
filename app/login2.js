@@ -24,6 +24,7 @@ const Login2Screen = () => {
         <Ionicons name="chevron-back" size={34} color="#363636" />
         <Text>E-mail</Text>
       </Pressable>
+      
       <Text style={styles.title}>Insira sua senha</Text>
       <View style={styles.inputContainer}>
         <TextInput

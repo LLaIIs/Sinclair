@@ -6,10 +6,10 @@ const router = useRouter();
 const CadastroScreen = () => {
 
   const [nomeCompleto, setNomeCompleto] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
+  // const [dataNascimento, setDataNascimento] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
 
   const handleSignUp = () => {
     // Adicione a lógica de cadastro aqui
@@ -18,7 +18,7 @@ const CadastroScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}   keyboardShouldPersistTaps='always' >
       <Pressable
         onPress={() => router.back()}
         style={({ pressed }) => [
@@ -38,13 +38,14 @@ const CadastroScreen = () => {
         onChangeText={setNomeCompleto}
       />
 
-      <TextInput
+      {/*Por enquanto não vejo nescessidade de um campo de data de nascimento
+       <TextInput
         style={styles.input}
         placeholder="Data de nascimento"
         keyboardType="numeric"
         value={dataNascimento}
         onChangeText={setDataNascimento}
-      />
+      /> */}
 
       <TextInput
         style={styles.input}
@@ -58,11 +59,11 @@ const CadastroScreen = () => {
         <TextInput
           style={styles.passwordInput}
           placeholder="Senha"
-          secureTextEntry={!isPasswordVisible}
           value={senha}
+          secureTextEntry={isPasswordVisible}
           onChangeText={setSenha}
         />
-        <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+       <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
           <Ionicons
             name={isPasswordVisible ? 'eye' : 'eye-off'}
             size={24}
