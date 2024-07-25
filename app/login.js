@@ -1,20 +1,65 @@
-import React from 'react';
-import {useRouter} from 'expo-router';
-import {Link} from 'expo-router';
+import React, { useState } from 'react';
+import {useRouter, Link} from 'expo-router';
 import { View, Text, TextInput, Pressable,TouchableOpacity, StyleSheet } from 'react-native';
-const router = useRouter();
+
 const LoginScreen = () => {
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
+
+   //Valida o email e passa para a proxima "página" com um parâmetro {email}
+   const handleContinue = () => {
+    //Verifica se foi preenchido
+    if (!email) {
+      setErrorMessage('E-mail é obrigatório!');
+      return;
+    }
+    //requisição para o /login/checkEmail
+    fetch('http://192.168.0.4:3000/login/checkEmail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      //Converte os dados digitados para uma String JSON
+      body: JSON.stringify({ email }),
+    })
+      .then(response => {
+        //recebe do back end resposta em status HTTP e defini as mensagens de erro
+        if (response.status === 400) {
+          setErrorMessage('E-mail inválido!');
+        } else if (response.status === 401) {
+          setErrorMessage('Endereço de e-mail não cadastrado!');
+        } else if (response.status === 200) {
+          //Navegua para a proxima "página" com um parâmetro {email}
+          router.push({
+            pathname: '/login2',
+            params: { email },
+          });
+          setErrorMessage(''); // Limpa qualquer mensagem de erro
+        } else {
+          setErrorMessage('Erro ao verificar o e-mail.');
+        }
+      })
+      .catch(() => {
+        setErrorMessage('Erro ao verificar o e-mail.');
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Faça login ou crie uma conta</Text>
-      <TextInput placeholder="E-mail" style={styles.input} />
-      
+      <TextInput 
+      placeholder="E-mail"
+       style={styles.input}
+       value={email}
+       onChangeText={setEmail} />
+         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       <Pressable
         style={({pressed})=>[
           styles.button,
           {transform:[{scale:pressed?0.95:1}]}
         ]}
-        onPress={() => router.push('/login2')}
+        onPress={handleContinue}
         >
         <Text style={styles.buttonText}>Continuar</Text>
       </Pressable>
@@ -101,6 +146,11 @@ const styles = StyleSheet.create({
   linkButton: {
     marginTop: 20,
     alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    marginTop:-15,
+    marginBottom: 10,
   },
 });
 

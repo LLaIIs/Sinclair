@@ -1,15 +1,43 @@
 import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
-import { View, TextInput, Pressable, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { View, TextInput, Pressable, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const Login2Screen = () => {
   const router = useRouter();
-  const [password, setPassword] = useState('');
+  const {email} = useLocalSearchParams();
+  const [senha, setSenha] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleLogin = () => {
-    // Adicione a lógica de autenticação da senha
+  //Realiza o login e define as mensagens de erro
+  const handleLogin = async ()  => {
+    setErrorMessage(''); //Limpa qualquer mensagem de erro anterior
+    try{
+      //requisição para /login
+      const response = await fetch('http://192.168.0.4:3000/login',{
+        method:'POST',
+        headers:{
+          'Content-type':'application/json'
+        },
+        //Converte os dados digitados para uma String  JSON
+        body:JSON.stringify({email,senha})
+      })
+      //Converte a resposta que esta em JSON em Obj JS
+      const data = await response.json();
+      if(response.status ===200){
+        Alert.alert('Sucesso','Logado com sucesso')
+      }else if(response.status ===401){
+        //Se for retornado status 401 definir mensagem de erro
+        setErrorMessage('Senha Incorreta. Tente novamente')
+        
+      }else{
+        console.log('Erro :',data.error)
+      }
+    }catch(error){
+      Alert.alert('Erro','Não foi possível logar')
+      console.log('erro:', error)
+    }
   };
 
   return (
@@ -22,15 +50,15 @@ const Login2Screen = () => {
         ]}
       >
         <Ionicons name="chevron-back" size={34} color="#363636" />
-        <Text>E-mail</Text>
+        <Text>{email}</Text>
       </Pressable>
       
       <Text style={styles.title}>Insira sua senha</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          onChangeText={setPassword}
-          value={password}
+          onChangeText={setSenha}
+          value={senha}
           secureTextEntry={!isPasswordVisible}
           placeholder="Senha"
         />
@@ -42,15 +70,17 @@ const Login2Screen = () => {
           />
         </TouchableOpacity>
       </View>
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       <Pressable
-        onPress={handleLogin}
         style={({ pressed }) => [
           styles.button,
           { transform: [{ scale: pressed ? 0.95 : 1 }] }
         ]}
+        onPress={handleLogin}
       >
         <Text style={styles.buttonText}>Entrar</Text>
       </Pressable>
+      
       <TouchableOpacity>
         <Text style={styles.linkText}>Esqueci a senha</Text>
       </TouchableOpacity>
@@ -107,6 +137,11 @@ const styles = StyleSheet.create({
   linkText: {
     color: '#007bff',
     textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: -15,
+    marginBottom: 10,
   },
 });
 

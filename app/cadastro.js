@@ -30,7 +30,7 @@ const CadastroScreen = () => {
   
    
     try{
-      //Faz uma requisição para o /cadastrar na api(back-end)
+      //Faz uma requisição para o /cadastrar na api (back-end)
       const response = await fetch('http://192.168.0.4:3000/cadastrar',{
         method:'POST',
         headers:{
@@ -45,7 +45,7 @@ const CadastroScreen = () => {
         router.push('/login')
     
       }else if (response.status === 400){
-        //Se for retornado um HTTP 400 exebir as mensagens do objeto errors
+        //Se for retornado um HTTP 400 definir as mensagens do objeto errors
         setErrors(data.errors)
       }else{
         Alert.alert('Erro',data.error);
