@@ -1,17 +1,18 @@
 {
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true,
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
-  },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/redefinir.js", "app/login4.js", "app/login3.js", "app/login2.js", "app/login.js", "app/cadastro.js"  ]
-}
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+      "strict": true,
+      "paths": {
+        "@/*": [
+          "./*"
+        ]
+      }
+    },
+    "include": [
+      "**/*.ts",
+      "**/*.tsx",
+      ".expo/types/**/*.ts",
+      "expo-env.d.ts"
+  , "app/redefinir.js", "app/login4.js", "app/login3.js", "app/login2.js", "app/login.js", "app/cadastro.js"  ]
+  }
+  

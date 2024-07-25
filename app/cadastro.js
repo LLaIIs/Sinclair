@@ -1,20 +1,61 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, Pressable, TextInput, TouchableOpacity, ScrollView, View } from 'react-native';
+import { StyleSheet, Text, Pressable, TextInput, TouchableOpacity, ScrollView, View, Alert} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-const router = useRouter();
+
 const CadastroScreen = () => {
 
   const [nomeCompleto, setNomeCompleto] = useState('');
   // const [dataNascimento, setDataNascimento] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  //Olho magico
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
+  //Armazenar mensagens de erro
+  const [errors, setErrors] = useState({
+    nome: '',
+    email: '',
+    senha: '',
+  });
+  const router = useRouter();
 
-  const handleSignUp = () => {
-    // Adicione a lógica de cadastro aqui
-    alert('Cadastro realizado com sucesso!');
-    router.push('/login');
+  const handleSignUp = async () => {
+    //Resetando mensagens de erro
+    setErrors({
+      nome:'',
+      email:'',
+      senha:'',
+    })
+
+  
+   
+    try{
+      //Faz uma requisição para o /cadastrar na api(back-end)
+      const response = await fetch('http://192.168.0.4:3000/cadastrar',{
+        method:'POST',
+        headers:{
+          'Content-type': 'application/json'
+        },
+        //converte os dados digitados para uma string JSON
+        body:JSON.stringify({nome:nomeCompleto,email,senha})
+      })
+      //Converte a resposta do servidor que esta em JSON em Obj JS
+      const data = await response.json();
+      if(response.status === 201){
+        router.push('/login')
+    
+      }else if (response.status === 400){
+        //Se for retornado um HTTP 400 exebir as mensagens do objeto errors
+        setErrors(data.errors)
+      }else{
+        Alert.alert('Erro',data.error);
+        console.log(data +'erro')
+      }
+    }catch(error){
+      Alert.alert('Erro','Não foi possível realizar o cadastro.');
+      console.log('erro do catch '+error)
+    }
+
   };
 
   return (
@@ -37,7 +78,7 @@ const CadastroScreen = () => {
         value={nomeCompleto}
         onChangeText={setNomeCompleto}
       />
-
+      {errors.nome? <Text style={styles.errorText}>{errors.nome}</Text>:null}
       {/*Por enquanto não vejo nescessidade de um campo de data de nascimento
        <TextInput
         style={styles.input}
@@ -54,7 +95,7 @@ const CadastroScreen = () => {
         value={email}
         onChangeText={setEmail}
       />
-
+      {errors.email? <Text style={styles.errorText}>{errors.email}</Text>:null}
       <View style={styles.passwordContainer}>
         <TextInput
           style={styles.passwordInput}
@@ -71,7 +112,8 @@ const CadastroScreen = () => {
           />
         </TouchableOpacity>
       </View>
-
+      {errors.senha? <Text style={styles.errorText}>{errors.senha}</Text>:null}
+      {/* Dar uma olhada nisso ou tirar */}
       <Text style={styles.terms}>
         Ao clicar em Concordar e Continuar, eu concordo com os Termos de Serviço, e reconheço nossa Política de Privacidade.
       </Text>
@@ -114,7 +156,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 25,
     borderRadius: 10,
   },
   passwordContainer: {
@@ -145,6 +187,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: -15,
+    marginBottom:15,
+    
   },
 });
 
