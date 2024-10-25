@@ -23,7 +23,7 @@ const Explore = () => {
 
   const router = useRouter();
 
-
+ 
  
   
  useFocusEffect(
@@ -59,7 +59,7 @@ const Explore = () => {
                   latitude: parseFloat(lat) || -23.55052, // Latitude
                   longitude: parseFloat(lng) || -46.633308, // Longitude
                 },
-                radius: 10000.0, // Raio de busca em metros
+                radius: 1000.0, // Raio de busca em metros
               },
             },
             languageCode: 'pt-BR',

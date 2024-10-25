@@ -16,7 +16,7 @@ const Search = () => {
   const router = useRouter();
  
 
- 
+
  
   useFocusEffect(
     useCallback(() => {

@@ -16,7 +16,7 @@ const ChatS = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [theme, setTheme] = useState('light');
 
 
   const fetchToken = async () => {
@@ -57,6 +57,21 @@ const ChatS = () => {
       fetchMessages();
     }
   }, [token, chatSessionId]);
+  const loadTheme = async () => {
+    try {
+      const storedTheme = await AsyncStorage.getItem('theme');
+        setTheme(storedTheme || 'light');
+     
+    } catch (error) {
+      console.error('Failed to load theme:', error);
+    }
+  };
+  
+  useEffect(() => {
+    
+    loadTheme(); 
+  }, []);
+    
 
   const extractedJson = (message) => {
     try {
@@ -175,16 +190,19 @@ const ChatS = () => {
   const renderBubble = (props) => {
     const { currentMessage } = props;
     return (
-      <View style={[currentMessage.user._id === 1 ? styles.userMessage : styles.chatGPTMessage]}>
-        <Text>{currentMessage.text}</Text>
+      <View style={[
+        currentMessage.user._id === 1 ? styles.userMessage : styles.chatGPTMessage,
+        theme === 'dark' && { backgroundColor: currentMessage.user._id === 1 ? '#5c5c5c' : '#333333' }
+      ]}>
+        <Text style={{ color: theme === 'dark' ? 'white' : 'black' }}>{currentMessage.text}</Text>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, theme === 'dark' && styles.darkBackground]}>
       <Pressable style={({ pressed }) => [styles.back, { transform: [{ scale: pressed ? 0.95 : 1 }] }]} onPress={() => router.push('/dicas')}>
-        <Ionicons name='arrow-back' color='black' size={30} />
+        <Ionicons name='arrow-back'  color={theme === 'dark' ? 'white' : 'black'}  size={30} />
       </Pressable>
      
       <GiftedChat
@@ -200,34 +218,28 @@ const ChatS = () => {
         renderInputToolbar={(props) => (
           <View>
              {isLoading && <Loading  />}
-            {/* <Pressable onPress={()=>{
-              console.log('jsonDataLocal', jsonLocal)
-              router.push({
-              pathname:'/explore',
-              params:{jsonData: JSON.stringify(jsonLocal)}
-            })}}
-             style={styles.explore}>
-              <Ionicons name='compass' size={30} color='black'/>
-              <Text> Ver lugares</Text>
-            </Pressable> */}
-          <View style={styles.inputContainer}>
+           
+          <View style={[styles.inputContainer, theme === 'dark' && styles.darkBackground]}>
             
             <TextInput
-              style={styles.input}
+              style={[styles.input, theme === 'dark' && styles.darkInput]}
               value={inputMessage}
               onChangeText={setInputMessage}
               placeholder="Digite sua mensagem..."
+              placeholderTextColor={theme === 'dark' ? 'lightgray' : '#999'}
             />
             <Pressable
               onPress={() => handleSendMessage([{ text: inputMessage, user: { _id: 1 } }])}
+            
               disabled={!inputMessage.trim() || isLoading}
-              style={({ pressed }) => [
-                styles.button,
-                !inputMessage.trim() || isLoading ? styles.disabledButton : {},
-                pressed && !(!inputMessage.trim() || isLoading) && { opacity: 0.5 },
-              ]}
+                style={({ pressed }) => [
+                  styles.button,
+                  theme === 'dark' && { backgroundColor: '#555' },
+                  !inputMessage.trim() || isLoading ? styles.disabledButton : {},
+                  pressed && !(!inputMessage.trim() || isLoading) && { opacity: 0.5 },
+                ]}
             >
-              <Ionicons name="send" color="black" size={23} />
+              <Ionicons name="send" color={theme === 'dark' ? 'white' : 'black'}  size={23} />
             </Pressable>
           </View>
           
@@ -311,7 +323,15 @@ const styles = StyleSheet.create({
     right:260,
     bottom:80,
     
-  }
+  },
+  darkBackground: {
+    backgroundColor: '#1a1a1a',
+  },
+  darkInput: {
+    backgroundColor: '#333',
+    color: 'white',
+    borderColor: '#555',
+  },
 });
 
 export default ChatS;

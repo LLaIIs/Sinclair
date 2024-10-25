@@ -143,17 +143,17 @@ useFocusEffect(
       onPress={() => handleChatPress(item.chatSessionId)}
       style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.95 : 1 }] }]}
     >
-      <View style={styles.chatItem}>
+      <View style={[styles.chatItem, theme === 'dark' && styles.chatItemDark]}>
         {editingChatId === item.chatSessionId ? (
           <TextInput
-            style={styles.chatItemTextInput}
+          style={[styles.chatItemTextInput, theme === 'dark' && styles.chatItemTextInputDark]}
             value={newChatName}
             onChangeText={setNewChatName}
             onSubmitEditing={() => updateChatName(item.chatSessionId, newChatName)}
             autoFocus
           />
         ) : (
-          <Text style={styles.chatItemText}>{item.name || `Chat ${item.chatSessionId}`}</Text>
+          <Text style={[styles.chatItemText, theme === 'dark' && styles.chatItemTextDark]}>{item.name || `Chat ${item.chatSessionId}`}</Text>
         )}
 
         {editingChatId === item.chatSessionId ? (
@@ -165,7 +165,7 @@ useFocusEffect(
           </Pressable>
         ) : (
           <Pressable onPress={() => handleEditPress(item.chatSessionId, item.name)}>
-            <Ionicons name='pencil' size={24} color='black' />
+            <Ionicons name='pencil' size={24} color={theme === 'dark' ? 'white' : 'black'} />
           </Pressable>
         )}
 
@@ -173,23 +173,23 @@ useFocusEffect(
           onPress={() => deleteChat(item.chatSessionId)}
           style={({ pressed }) => [styles.delete, { transform: [{ scale: pressed ? 0.95 : 1 }] }]}
         >
-          <Octicons name='trash' size={24} color='black' />
+          <Octicons name='trash' size={24} color={theme === 'dark' ? 'white' : 'black'}  />
         </Pressable>
       </View>
     </Pressable>
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, theme === 'dark' && styles.containerDark]}>
       <View style={styles.rowIcons}>
       <Pressable
         onPress={handleAddChatPress}
-        style={({ pressed }) => [styles.add, { transform: [{ scale: pressed ? 0.85 : 1 }] }]}
+        style={({ pressed }) => [styles.add,theme === 'dark' && styles.addDark, { transform: [{ scale: pressed ? 0.85 : 1 }] }]}
       >
-        <Ionicons name='add' size={30} color='white' />
+        <Ionicons name='add' size={30} color={theme === 'dark' ?  'black' :'white'}  />
       </Pressable>
       <Pressable onPress={() => setIsInfoModalVisible(true)} >
-        <Ionicons name='information-circle' size={40} color={'grey'} style={{marginTop: 30,}}/>
+        <Ionicons name='information-circle' size={40} color={theme === 'dark' ? 'white' : 'grey'} style={{marginTop: 30,}}/>
       </Pressable>
       </View>
       {!isLoggedIn?(
@@ -340,7 +340,23 @@ const styles = StyleSheet.create({
   rowIcons:{
     flexDirection: 'row', 
     
-  }
+  },
+  containerDark: { 
+    backgroundColor: '#1a1a1a' 
+  },
+  chatItemDark: { 
+    backgroundColor: '#333333', borderColor: '#666666' 
+  },
+  chatItemTextDark: { 
+    color: 'white' 
+  },
+  chatItemTextInputDark: { 
+    color: 'white', borderBottomColor: 'lightgrey'
+   },
+   addDark:{
+    backgroundColor:'white'
+   }
+
 });
 
 export default Dicas;

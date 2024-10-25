@@ -20,7 +20,7 @@ const Details = () => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
  
- 
+  
 
   
   useFocusEffect(

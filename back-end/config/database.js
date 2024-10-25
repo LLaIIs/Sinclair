@@ -6,7 +6,7 @@ const connectDB = async () => {
 
   try {
     //String de conexão
-   await mongoose.connect('mongodb+srv://suke:SaikiKusuo@cluster0.mybmqmb.mongodb.net/Sinclair'); //variavel de ambiente
+   await mongoose.connect('mongoDb'); //variavel de ambiente
     console.log('MongoDB connected');
   } catch (error) {
     console.error('Error connecting to MongoDB', error);

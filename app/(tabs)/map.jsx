@@ -25,7 +25,7 @@ const Map = () => {
   const router = useRouter();
   const mapRef = useRef(null); // Referência ao MapView
 
-  
+ 
 
   // Função para obter a localização do usuário
   const getLocation = async () => {
